@@ -8,12 +8,7 @@ This project was created for the Boot.dev course [First Personal Project](https:
 
 ## What It Does
 
-- Shows a 3x3 Tic Tac Toe board.
-- Tracks the current player's turn.
-- Places `X` for Player 1 and `O` for Player 2.
-- Detects wins across rows, columns, and diagonals.
-- Detects draws when the board is full.
-- Includes a restart button to reset the game.
+- It's a classical Tic Tac Toe game, you know what it does.
 
 ## How To Run
 
