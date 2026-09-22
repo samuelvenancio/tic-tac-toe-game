@@ -27,6 +27,11 @@ class TicTacToe:
         mainframe = ttk.Frame(root, padding=(28, 24, 28, 28), style="Shell.TFrame")
         mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
 
+        self.board = [
+            ["", "", ""],
+            ["", "", ""],
+            ["", "", ""]
+        ]
         self.player = StringVar()
         self.player.set("Player 1")
         self.turn_text = StringVar()
@@ -58,14 +63,11 @@ class TicTacToe:
     def change(self, row_index, col_index):
         player = self.player.get()
         button = self.matrix[row_index][col_index]
-        current = None
-        if player == "Player 1":
-            current = "X"
-        else:
-            current = "O"
-        button.config(text=current, state="disabled")
-        checked = self.check_if_player_won(row_index, col_index, current)
-        board_is_full = all(btn.instate(["disabled"]) for row in self.matrix for btn in row)
+        symbol = "X" if player == "Player 1" else "O"
+        self.board[row_index][col_index] = symbol
+        button.config(text=symbol, state="disabled")
+        checked = self.check_if_player_won(row_index, col_index, symbol)
+        board_is_full = all(item != "" for row in self.board for item in row)
         if checked:
             self.gameover(player)
         elif board_is_full:
@@ -73,16 +75,16 @@ class TicTacToe:
         else:
             self.player.set("Player 2") if player == "Player 1" else self.player.set("Player 1")
 
-    def check_if_player_won(self, row_index, col_index, current) -> bool:
-        if all(self.matrix[row_index][i]["text"] == current for i in range(3)):
+    def check_if_player_won(self, row_index, col_index, symbol) -> bool:
+        if all(self.board[row_index][j] == symbol for j in range(3)):
             return True
-        if all(self.matrix[i][col_index]["text"] == current for i in range(3)):
+        if all(self.board[i][col_index] == symbol for i in range(3)):
             return True
         if row_index == col_index:
-            if all(self.matrix[i][i]["text"] == current for i in range(3)):
+            if all(self.board[i][i] == symbol for i in range(3)):
                 return True
         if row_index + col_index == 2:
-            if all(self.matrix[i][2 - i]["text"] == current for i in range(3)):
+            if all(self.board[i][2 - i] == symbol for i in range(3)):
                 return True
         return False
 
@@ -90,6 +92,7 @@ class TicTacToe:
         self.player.set("Player 1")
         for i in range(3):
             for j in range(3):
+                self.board[i][j] = ""
                 button = self.matrix[i][j] 
                 button.configure(text="", state="normal")
 
