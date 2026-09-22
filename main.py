@@ -3,6 +3,12 @@ from tkinter import ttk, messagebox
 
 class TicTacToe:
 
+    PLAYER_ONE = "Player 1"
+    PLAYER_TWO = "Player 2"
+    X_SYMBOL = "X"
+    O_SYMBOL = "O"
+    EMPTY = ""
+
     def __init__(self, root):
         self.root = root
         self.root.title("Tic Tac Toe Game")
@@ -27,13 +33,9 @@ class TicTacToe:
         mainframe = ttk.Frame(root, padding=(28, 24, 28, 28), style="Shell.TFrame")
         mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
 
-        self.board = [
-            ["", "", ""],
-            ["", "", ""],
-            ["", "", ""]
-        ]
+        self.board = self.create_empty_board()
         self.player = StringVar()
-        self.player.set("Player 1")
+        self.player.set(self.PLAYER_ONE)
         self.turn_text = StringVar()
         self.player.trace_add("write", self.update_turn_text)
         self.update_turn_text()
@@ -57,21 +59,25 @@ class TicTacToe:
         ttk.Button(mainframe, text="Restart game", style="Restart.TButton", command=self.restart).grid(row=3, column=0, sticky=E, pady=(18, 0))
 
     def update_turn_text(self, *args):
-        mark = "X" if self.player.get() == "Player 1" else "O"
-        self.turn_text.set(f"{self.player.get()}'s turn ({mark})")
+        player = self.player.get()
+        mark = self.get_player_symbol(player)
+        self.turn_text.set(f"{player}'s turn ({mark})")
 
     def change(self, row_index, col_index):
         player = self.player.get()
-        button = self.matrix[row_index][col_index]
         symbol = self.get_player_symbol(player)
-        self.board[row_index][col_index] = symbol
-        button.config(text=symbol, state="disabled")
+        self.make_move(row_index, col_index, symbol)
         if self.check_if_player_won(row_index, col_index, symbol):
             self.gameover(player)
         elif self.is_board_full():
             self.tie()
         else:
             self.switch_player()
+
+    def make_move(self, row_index, col_index, symbol):
+        self.board[row_index][col_index] = symbol
+        button = self.matrix[row_index][col_index]
+        button.config(text=symbol, state="disabled")
 
     def check_if_player_won(self, row_index, col_index, symbol) -> bool:
         if all(self.board[row_index][j] == symbol for j in range(3)):
@@ -87,26 +93,24 @@ class TicTacToe:
         return False
 
     def is_board_full(self):
-        return all(item != "" for row in self.board for item in row)
+        return all(item != self.EMPTY for row in self.board for item in row)
 
     def get_player_symbol(self, player):
-        if player == "Player 1":
-            return "X"
-        return "O"
+        return self.X_SYMBOL if player == self.PLAYER_ONE else self.O_SYMBOL
 
     def switch_player(self):
-        if self.player.get() == "Player 1":
-            self.player.set("Player 2")
+        if self.player.get() == self.PLAYER_ONE:
+            self.player.set(self.PLAYER_TWO)
         else:
-            self.player.set("Player 1")
+            self.player.set(self.PLAYER_ONE)
 
     def restart(self):
-        self.player.set("Player 1")
+        self.player.set(self.PLAYER_ONE)
+        self.board = self.create_empty_board()
         for i in range(3):
             for j in range(3):
-                self.board[i][j] = ""
                 button = self.matrix[i][j] 
-                button.configure(text="", state="normal")
+                button.configure(text=self.EMPTY, state="normal")
 
     def gameover(self, winner):
         messagebox.showinfo("Game Over", f"{winner} won!")
@@ -115,7 +119,14 @@ class TicTacToe:
     def tie(self):
         messagebox.showinfo("Game Over", "The game ended in a draw")
         self.restart()
-        
+
+    def create_empty_board(self):
+        return [
+            [self.EMPTY, self.EMPTY, self.EMPTY],
+            [self.EMPTY, self.EMPTY, self.EMPTY],
+            [self.EMPTY, self.EMPTY, self.EMPTY]
+        ]
+
 root = Tk()
 TicTacToe(root)
 root.mainloop()
