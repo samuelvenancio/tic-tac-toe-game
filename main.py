@@ -67,10 +67,9 @@ class TicTacToe:
         self.board[row_index][col_index] = symbol
         button.config(text=symbol, state="disabled")
         checked = self.check_if_player_won(row_index, col_index, symbol)
-        board_is_full = all(item != "" for row in self.board for item in row)
         if checked:
             self.gameover(player)
-        elif board_is_full:
+        elif self.is_board_full():
             self.tie()
         else:
             self.switch_player()
@@ -87,6 +86,9 @@ class TicTacToe:
             if all(self.board[i][2 - i] == symbol for i in range(3)):
                 return True
         return False
+
+    def is_board_full(self):
+        return all(item != "" for row in self.board for item in row)
 
     def switch_player(self):
         if self.player.get() == "Player 1":
