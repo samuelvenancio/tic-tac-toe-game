@@ -63,11 +63,10 @@ class TicTacToe:
     def change(self, row_index, col_index):
         player = self.player.get()
         button = self.matrix[row_index][col_index]
-        symbol = "X" if player == "Player 1" else "O"
+        symbol = self.get_player_symbol(player)
         self.board[row_index][col_index] = symbol
         button.config(text=symbol, state="disabled")
-        checked = self.check_if_player_won(row_index, col_index, symbol)
-        if checked:
+        if self.check_if_player_won(row_index, col_index, symbol):
             self.gameover(player)
         elif self.is_board_full():
             self.tie()
@@ -89,6 +88,11 @@ class TicTacToe:
 
     def is_board_full(self):
         return all(item != "" for row in self.board for item in row)
+
+    def get_player_symbol(self, player):
+        if player == "Player 1":
+            return "X"
+        return "O"
 
     def switch_player(self):
         if self.player.get() == "Player 1":
