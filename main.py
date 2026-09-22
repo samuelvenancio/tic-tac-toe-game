@@ -73,7 +73,7 @@ class TicTacToe:
         elif board_is_full:
             self.tie()
         else:
-            self.player.set("Player 2") if player == "Player 1" else self.player.set("Player 1")
+            self.switch_player()
 
     def check_if_player_won(self, row_index, col_index, symbol) -> bool:
         if all(self.board[row_index][j] == symbol for j in range(3)):
@@ -87,6 +87,12 @@ class TicTacToe:
             if all(self.board[i][2 - i] == symbol for i in range(3)):
                 return True
         return False
+
+    def switch_player(self):
+        if self.player.get() == "Player 1":
+            self.player.set("Player 2")
+        else:
+            self.player.set("Player 1")
 
     def restart(self):
         self.player.set("Player 1")
